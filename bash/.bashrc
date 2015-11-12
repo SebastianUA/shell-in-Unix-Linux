@@ -1,0 +1,46 @@
+# ls
+alias ls="ls -G"  
+#alias ll="ls -l"
+alias la="ls -la"
+alias lk='ls -lSr'
+
+#goGVO
+alias jump2="ssh vitaly.n@gvojump2.gvodatacenter.com"
+alias jump1="ssh vitaly.n@gvojump1.gvodatacenter.com"
+
+#
+alias grep='egrep --color'
+
+# My VPS
+alias linux-notes="ssh captain@31.187.70.238" 
+alias linux-notes-backup="scp -r captain@31.187.70.238:/home/captain/backups/backup-* ~/My\ works/My_sites/backUPs/"
+
+# set colors  
+export CLICOLOR=1  
+export LSCOLORS=Gxfxcxdxbxegedabagacad
+#export LSCOLORS=GxFxCxDxBxegedabagaced
+
+
+PS1="
+\[\033[1;37m\]\342\224\214($(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\H'; else echo '\[\033[01;34m\]\u@\h'; fi)\[\033[1;37m\])\342\224\200(\$(if [[ \$? == 0 ]]; then echo \"\[\033[01;32m\]\342\234\223\"; else echo \"\[\033[01;31m\]\342\234\227\"; fi)\[\033[1;37m\])\342\224\200(\[\033[1;34m\]\@ \d\[\033[1;37m\])\[\033[1;37m\]
+\342\224\224\342\224\200(\[\033[1;32m\]\w\[\033[1;37m\])\342\224\200(\[\033[1;32m\]\$(ls -1 | wc -l | sed 's: ::g') files, \$(ls -lah | grep -m 1 total | sed 's/total //')b\[\033[1;37m\])\342\224\200> \[\033[0m\]"
+
+if [ -f /usr/local/bin/grc ]; then
+  alias cvs="grc --colour=auto cvs"
+  alias diff="grc --colour=auto diff"
+  alias esperanto="grc --colour=auto esperanto"
+  alias gcc="grc --colour=auto gcc"
+  alias irclog="grc --colour=auto irclog"
+  alias ldap="grc --colour=auto ldap"
+  alias log="grc --colour=auto log"
+  alias netstat="grc --colour=auto netstat"
+  alias ping="grc --colour=auto ping"
+  alias proftpd="grc --colour=auto proftpd"
+  alias traceroute="grc --colour=auto traceroute"
+  alias wdiff="grc --colour=auto wdiff"
+  alias dig="grc --colour=auto dig"
+  alias ll="grc --colour=auto ls -l"
+fi
+
+export HISTIGNORE=pwgen*
+export HISTSIZE=1000
