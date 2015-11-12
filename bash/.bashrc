@@ -5,15 +5,15 @@ alias la="ls -la"
 alias lk='ls -lSr'
 
 #goGVO
-alias jump2="ssh vitaly.n@gvojump2.gvodatacenter.com"
-alias jump1="ssh vitaly.n@gvojump1.gvodatacenter.com"
+alias jump2="ssh vitaly.n@gvojump2.com"
+alias jump1="ssh vitaly.n@gvojump1.com"
 
 #
 alias grep='egrep --color'
 
 # My VPS
-alias linux-notes="ssh captain@31.187.70.238" 
-alias linux-notes-backup="scp -r captain@31.187.70.238:/home/captain/backups/backup-* ~/My\ works/My_sites/backUPs/"
+#alias linux-notes="ssh USER@IP" 
+#alias linux-notes-backup="scp -r USER@IP:/home/captain/backups/backup-* ~/My\ works/My_sites/backUPs/"
 
 # set colors  
 export CLICOLOR=1  
