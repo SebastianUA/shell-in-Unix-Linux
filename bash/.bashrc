@@ -4,7 +4,7 @@ alias ls="ls -G"
 alias la="ls -la"
 alias lk='ls -lSr'
 
-#goGVO
+#
 alias jump2="ssh vitaly.n@gvojump2.com"
 alias jump1="ssh vitaly.n@gvojump1.com"
 
