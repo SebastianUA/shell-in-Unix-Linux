@@ -41,6 +41,15 @@ ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[green]%}!"
 ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[green]%}?"
 ZSH_THEME_GIT_PROMPT_CLEAN=""
  
+#
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8  
+export LC_CTYPE=$LANG
+
+for var in LANG LC_ALL LC_MESSAGES ; do
+  [[ -n ${(P)var} ]] && export $var
+done 
+ 
 # -------------------------------------------------------------------
 #			 MY ALIASES
 # -------------------------------------------------------------------
