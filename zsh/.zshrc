@@ -42,13 +42,10 @@ ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[green]%}?"
 ZSH_THEME_GIT_PROMPT_CLEAN=""
  
 # -------------------------------------------------------------------
-#
-# MY ALIASES
-# 
+#			 MY ALIASES
 # -------------------------------------------------------------------
 # Git aliases
 # -------------------------------------------------------------------
- 
 alias ga='git add -A'
 alias gp='git push'
 alias gl='git log'
@@ -74,20 +71,20 @@ alias glg='git lg'
 # Capistrano aliases
 # -------------------------------------------------------------------
 alias capd='cap deploy'
- 
 # -------------------------------------------------------------------
-# Symfony aliases
+# Mercurial (hg)
 # -------------------------------------------------------------------
- 
-alias symcl='php app/console cache:clear --no-debug'
-alias symcla='php app/console assetic:dump --no-debug'
-alias symaiaw = 'php app/console assets:install --symlink && php app/console assetic:watch'
- 
+ alias 'h=hg status'
+ alias 'hc=hg commit'
+ alias 'push=hg push'
+ alias 'pull=hg pull'
+ alias 'clone=hg clone'
+
 # -------------------------------------------------------------------
 # OTHER aliases
 # -------------------------------------------------------------------
 alias cl='clear'
-
+# -------------------------------------------------------------------
 
  
  
@@ -113,3 +110,4 @@ cdf() {
         echo 'No Finder window found' >&2
     fi
 }
+
