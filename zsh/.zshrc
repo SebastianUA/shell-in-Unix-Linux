@@ -110,4 +110,56 @@ cdf() {
         echo 'No Finder window found' >&2
     fi
 }
+extract () {
+	if [[ -f $1 ]] then
+		if [[ -x /usr/bin/pbzip2 || -x /usr/local/bin/pbzip2 ]] then
+			BZIP=pbzip2
+		else
+			BZIP=bzip2
+		fi
+		case $1 in
+			*.tar.bz2)  `$BZIP -v -d $1`    ;;
+			*.tar.gz)   tar -xvzf $1        ;;
+			*.rar)      unrar x $1          ;;
+			*.deb)      ar -x $1            ;;
+			*.bz2)      `$BZIP -d $1`       ;;
+			*.lzh)      lha x $1            ;;
+			*.gz)       gunzip -d $1        ;;
+			*.tar)      tar -xvf $1         ;;
+			*.tgz)      tar -xvzf $1        ;;
+			*.tbz2)     tar -jxvf $1        ;;
+			*.zip)      unzip $1            ;;
+			*.Z)        uncompress $1       ;;
+			*.xz)       xz -d $1            ;;
+			*)          echo "'$1' Error. Please go away" ;;
+		esac
+	else
+		echo "'$1' is not a valid file"
+	fi
+}
+
+rmtex() {
+	find . -maxdepth 1 -regex ".*\(\~\|\.log\|\.nav\|\.snm\|\.toc\|\.cp\|\.fn\|\.tp\|\.vr\|\.pg\|\.bbl\|\#\|\.blg\|\.ilg\|\.dvi\|\.aux\)" -exec rm -vf {} \; ; find . -maxdepth 1 -type d -name "auto" -exec rm -vfr {} \;
+}
+
+
+psgrep() {
+	if [ ! -z $1 ] ; then
+		ps aux | grep $1 | grep -v grep
+	else
+		echo "!! Need name to grep for"
+	fi
+}
+
+pskill() {
+	if  [ ! -z $1 ] ; then
+		kill -9 `ps aux | grep $1 | grep -v grep  | awk '{ print $2}'`
+	else 
+		echo "!! Need name to grep for"
+	fi
+}
+
+mcd () {
+	mkdir "$@" && cd "$@"
+}
 
