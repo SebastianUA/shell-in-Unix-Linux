@@ -42,6 +42,9 @@ if [ -f /usr/local/bin/grc ]; then
   alias dig="grc --colour=auto dig"
   alias ll="grc --colour=auto ls -l"
 fi
-
+# History Tweaks
 export HISTIGNORE=pwgen*
+export HISTCONTROL=ignoredups:ignorespace
 export HISTSIZE=1000
+export HISTFILESIZE=2000
+
