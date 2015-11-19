@@ -5,42 +5,7 @@ set number
 noremap jk <ESC>
 filetype plugin indent on
 set encoding=utf-8
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+"
+"
+set cursorline
+set splitright
