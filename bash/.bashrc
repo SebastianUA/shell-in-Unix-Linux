@@ -55,25 +55,44 @@ extract () {
       # display usage if no parameters given
       # echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
       case $1 in
-          *.tar.bz2)   tar xvjf $1    ;;
-          *.tar.gz)    tar xvzf $1    ;;
-          *.tar.xz)    tar xvJf $1    ;;
-          *.lzma)      unlzma $1      ;;
-          *.bz2)       bunzip2 $1     ;;
-          *.rar)       rar x $1       ;;
-          *.gz)        gunzip $1      ;;
-          *.tar)       tar xvf $1     ;;
-          *.tbz2)      tar xvjf $1    ;;
-          *.tgz)       tar xvzf $1    ;;
-          *.zip)       unzip $1       ;;
-          *.xz)        unxz $1        ;;
-          *.Z)         uncompress $1  ;;
-          *.7z)        7z x $1        ;;
+          *.tar.bz2)   tar xvjf "$1"    ;;
+          *.tar.gz)    tar xvzf "$1"    ;;
+          *.tar.xz)    tar xvJf "$1"    ;;
+          *.lzma)      unlzma "$1"      ;;
+          *.bz2)       bunzip2 "$1"     ;;
+          *.rar)       rar x "$1"       ;;
+          *.gz)        gunzip "$1"      ;;
+          *.tar)       tar xvf "$1"     ;;
+          *.tbz2)      tar xvjf "$1"    ;;
+          *.tgz)       tar xvzf "$1"    ;;
+          *.zip)       unzip "$1"       ;;
+          *.xz)        unxz "$1"        ;;
+          *.Z)         uncompress "$1"  ;;
+          *.7z)        7z x "$1"        ;;
           *)           echo "don't know how to extract '$1'..." ;;
       esac
   else
       echo "'$1' is not a valid file!"
   fi
 }
-
+# pack directories
+function pack() {
+    target=${2%/}
+    case $1 in
+    gz)
+        tar czvf ${target}.tar.gz $target ;;
+    bz)
+        tar cjvf ${target}.tar.bz2 $target ;;
+    xz)
+        tar cJvf ${target}.tar.xz $target ;;
+    7z)
+        7zr a ${target}.7z $target ;;
+    rar)
+        rar a ${target}.rar $target ;;
+    zip)
+        zip -r ${target}.zip $target ;;
+    *)
+        echo "Usage: pack [gzip|bzip2|xz|7z|rar|zip] [target]" ;;
+    esac
+}
 
