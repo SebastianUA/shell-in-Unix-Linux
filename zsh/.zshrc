@@ -1,174 +1,163 @@
-# Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
- 
+# Path to your oh-my-zsh installation.
+export ZSH=/Users/captain/.oh-my-zsh
+
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="bira"
- 
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
- 
-# Set to this to use case-sensitive completion
+#ZSH_THEME="robbyrussell"
+
+ZSH_THEME="agnoster"
+#ZSH_THEME="cobalt2"
+
+# Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
- 
-# Comment this out to disable weekly auto-update checks
+
+# Uncomment the following line to use hyphen-insensitive completion. Case
+# sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+
+# Uncomment the following line to disable bi-weekly auto-update checks.
 # DISABLE_AUTO_UPDATE="true"
- 
-# Uncomment following line if you want to disable colors in ls
+
+# Uncomment the following line to change how often to auto-update (in days).
+# export UPDATE_ZSH_DAYS=13
+
+# Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
- 
-# Uncomment following line if you want to disable autosetting terminal title.
+
+# Uncomment the following line to disable auto-setting terminal title.
 # DISABLE_AUTO_TITLE="true"
- 
-# Uncomment following line if you want red dots to be displayed while waiting for completion
-COMPLETION_WAITING_DOTS="true"
- 
+
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
+
+# Uncomment the following line to display red dots whilst waiting for completion.
+# COMPLETION_WAITING_DOTS="true"
+
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# HIST_STAMPS="mm/dd/yyyy"
+
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
+
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
 plugins=(git)
- 
+
+# User configuration
+
+export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/git/bin:/usr/local/bin:/usr/bin:/usr/sbin:/sbin:/bin:/opt/local/bin:/opt/local/sbin:/opt/X11/bin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/git/bin"
+# export MANPATH="/usr/local/man:$MANPATH"
+
 source $ZSH/oh-my-zsh.sh
- 
-# Customize to your needs...
-export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin:/usr/local/git/bin:/opt/local/bin
-ZSH_THEME_GIT_PROMPT_PREFIX=" on %{$fg[magenta]%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[green]%}!"
-ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[green]%}?"
-ZSH_THEME_GIT_PROMPT_CLEAN=""
- 
+
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
+
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# ssh
+# export SSH_KEY_PATH="~/.ssh/dsa_id"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
 #
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8  
-export LC_CTYPE=$LANG
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+#
+alias grep='egrep --color'
 
-for var in LANG LC_ALL LC_MESSAGES ; do
-  [[ -n ${(P)var} ]] && export $var
-done 
- 
-# -------------------------------------------------------------------
-#			 MY ALIASES
-# -------------------------------------------------------------------
-# Git aliases
-# -------------------------------------------------------------------
-alias ga='git add -A'
-alias gp='git push'
-alias gl='git log'
-alias gs='git status'
-alias gd='git diff'
-alias gm='git commit -m'
-alias gma='git commit -am'
-alias gb='git branch'
-alias gc='git checkout'
-alias gra='git remote add'
-alias grr='git remote rm'
-alias gpu='git pull'
-alias gcl='git clone'
-alias gta='git tag -a -m'
-alias gf='git reflog'
- 
-# leverage an alias from the ~/.gitconfig
-alias gh='git hist'
-alias glg1='git lg1'
-alias glg2='git lg2'
-alias glg='git lg' 
-# -------------------------------------------------------------------
-# Capistrano aliases
-# -------------------------------------------------------------------
-alias capd='cap deploy'
-# -------------------------------------------------------------------
-# Mercurial (hg)
-# -------------------------------------------------------------------
- alias 'h=hg status'
- alias 'hc=hg commit'
- alias 'push=hg push'
- alias 'pull=hg pull'
- alias 'clone=hg clone'
-
-# -------------------------------------------------------------------
-# OTHER aliases
-# -------------------------------------------------------------------
-alias cl='clear'
-# -------------------------------------------------------------------
-
- 
- 
-# -------------------------------------------------------------------
-# FUNCTIONS
-# -------------------------------------------------------------------
- 
-# return my IP address
-function myip() {
-    ifconfig lo0 | grep 'inet ' | sed -e 's/:/ /' | awk '{print "lo0       : " $2}'
-     ifconfig en0 | grep 'inet ' | sed -e 's/:/ /' | awk '{print "en0 (IPv4): " $2 " " $3 " " $4 " " $5 " " $6}'
-     ifconfig en0 | grep 'inet6 ' | sed -e 's/ / /' | awk '{print "en0 (IPv6): " $2 " " $3 " " $4 " " $5 " " $6}'
-     ifconfig en1 | grep 'inet ' | sed -e 's/:/ /' | awk '{print "en1 (IPv4): " $2 " " $3 " " $4 " " $5 " " $6}'
-     ifconfig en1 | grep 'inet6 ' | sed -e 's/ / /' | awk '{print "en1 (IPv6): " $2 " " $3 " " $4 " " $5 " " $6}'
-}
- 
-# Change directory to the current Finder directory
-cdf() {
-    target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
-    if [ "$target" != "" ]; then
-        cd "$target"; pwd
-    else
-        echo 'No Finder window found' >&2
-    fi
-}
+# My VPS
+alias linux-notes="ssh captain@31.187.70.238"
+alias linux-notes-backup="scp -r captain@31.187.70.238:/home/captain/backups/backup-* ~/My\ works/My_sites/backUPs/"
+# set colors  
+export CLICOLOR=1
+export LSCOLORS=Gxfxcxdxbxegedabagacad
+#export LSCOLORS=GxFxCxDxBxegedabagaced
+if [ -f /usr/local/bin/grc ]; then
+	alias cvs="grc --colour=auto cvs"
+	alias diff="grc --colour=auto diff"
+    	alias esperanto="grc --colour=auto esperanto"
+	alias gcc="grc --colour=auto gcc"
+	alias irclog="grc --colour=auto irclog"
+	alias ldap="grc --colour=auto ldap"
+	alias log="grc --colour=auto log"
+	alias netstat="grc --colour=auto netstat"
+	alias ping="grc --colour=auto ping"
+	alias proftpd="grc --colour=auto proftpd"
+	alias traceroute="grc --colour=auto traceroute"
+	alias wdiff="grc --colour=auto wdiff"
+	alias dig="grc --colour=auto dig"
+	alias ll="grc --colour=auto ls -l"
+	alias cat="grc --colour=auto cat"
+fi
+								        
+#==============================FUNCTIONS==============================#
+# extract archives
 extract () {
-	if [[ -f $1 ]] then
-		if [[ -x /usr/bin/pbzip2 || -x /usr/local/bin/pbzip2 ]] then
-			BZIP=pbzip2
-		else
-			BZIP=bzip2
-		fi
-		case $1 in
-			*.tar.bz2)  `$BZIP -v -d $1`    ;;
-			*.tar.gz)   tar -xvzf $1        ;;
-			*.rar)      unrar x $1          ;;
-			*.deb)      ar -x $1            ;;
-			*.bz2)      `$BZIP -d $1`       ;;
-			*.lzh)      lha x $1            ;;
-			*.gz)       gunzip -d $1        ;;
-			*.tar)      tar -xvf $1         ;;
-			*.tgz)      tar -xvzf $1        ;;
-			*.tbz2)     tar -jxvf $1        ;;
-			*.zip)      unzip $1            ;;
-			*.Z)        uncompress $1       ;;
-			*.xz)       xz -d $1            ;;
-			*)          echo "'$1' Error. Please go away" ;;
-		esac
-	else
-		echo "'$1' is not a valid file"
-	fi
-}
-
-rmtex() {
-	find . -maxdepth 1 -regex ".*\(\~\|\.log\|\.nav\|\.snm\|\.toc\|\.cp\|\.fn\|\.tp\|\.vr\|\.pg\|\.bbl\|\#\|\.blg\|\.ilg\|\.dvi\|\.aux\)" -exec rm -vf {} \; ; find . -maxdepth 1 -type d -name "auto" -exec rm -vfr {} \;
-}
-
-
-psgrep() {
-	if [ ! -z $1 ] ; then
-		ps aux | grep $1 | grep -v grep
-	else
-		echo "!! Need name to grep for"
-	fi
-}
-
-pskill() {
-	if  [ ! -z $1 ] ; then
-		kill -9 `ps aux | grep $1 | grep -v grep  | awk '{ print $2}'`
-	else 
-		echo "!! Need name to grep for"
-	fi
-}
-
-mcd () {
-	mkdir "$@" && cd "$@"
-}
-
+	  if [ -f $1 ] ; then
+		  # display usage if no parameters given
+		  # echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+		  case $1 in
+			  *.tar.bz2)   tar xvjf "$1"    ;;
+		  	  *.tar.gz)    tar xvzf "$1"    ;;
+	  		  *.tar.xz)    tar xvJf "$1"    ;;
+  			  *.lzma)      unlzma "$1"      ;;
+			  *.bz2)       bunzip2 "$1"     ;;
+	  		  *.rar)       rar x "$1"       ;;
+  			  *.gz)        gunzip "$1"      ;;
+		  	  *.tar)       tar xvf "$1"     ;;
+		  	  *.tbz2)      tar xvjf "$1"    ;;
+	  		  *.tgz)       tar xvzf "$1"    ;;
+  			  *.zip)       unzip "$1"       ;;
+		  	  *.xz)        unxz "$1"        ;;
+	  		  *.Z)         uncompress "$1"  ;;
+  			  *.7z)        7z x "$1"        ;;
+			  *)           echo "don't know how to extract '$1'..." ;;
+		  esac
+	  else
+		  echo "'$1' is not a valid file!"
+	  fi
+  }
+  # pack directories
+  function pack() {
+      target=${2%/}
+          case $1 in
+		      gz)
+			      tar czvf ${target}.tar.gz $target ;;
+	     	      bz)
+			      tar cjvf ${target}.tar.bz2 $target ;;
+		      xz)
+			      tar cJvf ${target}.tar.xz $target ;;
+		      7z)
+			      7zr a ${target}.7z $target ;;
+		      rar)
+			      rar a ${target}.rar $target ;;
+		      zip)
+			      zip -r ${target}.zip $target ;;
+		      *)
+			      echo "Usage: pack [gzip|bzip2|xz|7z|rar|zip] [target]" ;;
+	      esac
+      }
+#      
