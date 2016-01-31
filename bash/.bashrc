@@ -45,9 +45,11 @@ if [ -f /usr/local/bin/grc ]; then
 fi
 #==============================History Tweaks==============================#
 export HISTIGNORE=pwgen*
-export HISTCONTROL=ignoredups:ignorespace
-export HISTSIZE=1000
-export HISTFILESIZE=2000
+export HISTCONTROL=ignoredups:ignorespace # no duplicate entries
+export HISTSIZE=1000 # custom history size
+export HISTFILESIZE=2000 # custom history file size
+shopt -s histappend  # append to history, don't overwrite it
+PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"  # Save and reload the history after each command finishes           
 #==============================FUNCTIONS==============================#
 # extract archives
 extract () {
