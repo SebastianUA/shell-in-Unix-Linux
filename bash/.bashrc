@@ -14,6 +14,23 @@ alias grep='egrep --color'
 #My VPS
 #alias linux-notes="ssh USER@IP" 
 #alias linux-notes-backup="scp -r USER@IP:/home/captain/backups/backup-* ~/My\ works/My_sites/backUPs/"
+# GIT
+alias gst='git status'
+alias gl='git pull'
+alias gp='git push'
+alias gd='git diff | mate'
+alias ga='git add '
+alias gau='git add --update'
+alias gc='git commit -v'
+alias gca='git commit -v -a'
+alias gb='git branch'
+alias gba='git branch -a'
+alias gco='git checkout'
+alias gcob='git checkout -b'
+alias gcot='git checkout -t'
+alias gcotb='git checkout --track -b'
+alias glog='git log'
+alias glogp='git log --pretty=format:"%h %s" --graph'
 #==============================Set colors==============================#
 export CLICOLOR=1  
 export LSCOLORS=Gxfxcxdxbxegedabagacad
