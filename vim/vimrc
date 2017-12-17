@@ -1,0 +1,193 @@
+"return" 2>&- || "exit"
+"
+" http://dougblack.io/words/a-good-vimrc.html
+"
+" ==============================
+" General settings
+" ============================== 
+" 
+"call plug#begin('~/.vim/autoload')
+call plug#begin('~/.vim/plugins')
+Plug 'pearofducks/ansible-vim'
+Plug 'pearofducks/ansible-vim', { 'do': './UltiSnips/generate.py' }
+Plug 'neomake/neomake'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'https://github.com/darfink/vim-plist.git' | Plug 'darfink/vim-plist'
+Plug 'https://github.com/ekalinin/Dockerfile.vim' | Plug 'ekalinin/Dockerfile.vim'
+Plug 'docker/docker'
+
+au BufNewFile,BufRead Jenkinsfile setf groovy
+
+" Initialize plugin system
+call plug#end()
+" 
+" Syntax highlighting
+ syntax on
+"Set theme 
+ colorscheme Benokai "molokai itg_flat
+" Show current line number 
+ set number                     
+ set numberwidth=5
+"Display commands in the bottom right corner as they are typed
+ set showcmd 
+" highlight current line 
+set cursorline         
+" Show relative line numbers 
+ "set relativenumber 
+" point for nums
+ "set numberwidth=8
+"
+ set ai
+ set cin
+"
+ set lz
+"
+ set ffs=unix,dos,mac
+ set fencs=utf-8,cp1251,koi8-r,ucs-2,cp866
+"
+ noremap jk <ESC>
+ filetype plugin indent on
+ set encoding=utf-8
+"
+ set splitright
+" load filetype-specific indent files   
+ filetype indent on      
+"Display a list of matches above the command line when invoking completion; visual autocomplete for command menu 
+ set wildmenu     
+" redraw only when we need to.   
+ set lazyredraw          
+" highlight matching [{()}]
+ set showmatch           
+"Turn off syntax highlighting for printing and set papersize
+ set printoptions=syntax:n,paper:letter
+"Indenting (cindent or smartindent)
+ set smartindent
+" Visualization for tabs and trailing spaces
+ set listchars=tab:<-,trail:~
+" Don't break words
+ set linebreak
+ "set showbreak=>>>                       " Mark broken lines with >>>
+" Display as many lines as possible 
+ set display=lastline 
+" Always try to keep this many lines above and below the cursor
+ set scrolloff=7
+" Allow virtual editing in block mode
+ set virtualedit=block 
+" No bell at all
+ set visualbell t_vb=
+" Prefer vertical diffsplits and ignore whitespace 
+"set diffopt+=vertical,iwhite
+" Put only one space after '.', '?, and '!' with a join command
+ set nojoinspaces
+" Stop syntax highlighting after this many characters per line (paragraph)
+ set synmaxcol=5000
+" Set the default language to US-English
+ set spelllang=en_us
+" Increase the maximum number to tab pages 
+ set tabpagemax=25
+"
+" ==============================
+" Searching & replacing
+" ==============================
+" Incremental search ; search as characters are entered  
+ set incsearch 
+" highlight matches 
+ set hlsearch      
+" Ignore case when searching only if all letters are lowercase
+ set ignorecase
+ set smartcase 
+" enable folding 
+ set foldenable  
+" Wrap search when EOF is reached
+ set wrapscan
+"
+" ==============================
+" Tab behavior
+" ==============================
+" Insert spaces instead of tabs
+ set expandtab
+" Size of a tab
+  set tabstop=4
+" Number of spaces inserted for indentation
+ set shiftwidth=4
+" Don't show possible completions that don't match the case of existing text
+ set infercase
+" Don't show more than 10 items in the popup menu
+ set pumheight=10
+" Where to look for possible completions (spell check must be on for kspell option to be effective [slow])
+ set complete=.,w,u,b,kspell
+ set complete=.,w,u,b
+" How to show and insert possible completions
+ set completeopt=menu,longest
+"
+" ==============================
+" Status line
+" ==============================
+" Always display the status line
+ set laststatus=2
+" Format string
+ set statusline=%4(%m%)\ %f\ %y\ %{'['.&ff.'\ '.(&fenc==''?&enc:&fenc).']'}\ %r\ %=\Line\ %-4l\ \Col\ %-4c\ [%L\ lines]  
+" ==============================  
+" CtrlP settings
+ let g:ctrlp_match_window = 'bottom,order:ttb'
+ let g:ctrlp_switch_buffer = 0
+ let g:ctrlp_working_path_mode = 0
+ let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
+" ==============================  
+"vertical line
+ "set colorcolumn=5
+
+ "set mouse=a
+ "set mousehide
+ "set pastetoggle=
+
+ " Turn on the WiLd menu
+ "set wildmenu
+"
+"
+" Yaml file handling
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+filetype plugin indent on
+autocmd FileType yaml setl indentkeys-=<:>
+
+" Copy paste with ctr+c, ctr+v, etc
+:behave mswin
+:set clipboard=unnamedplus
+:smap <Del> <C-g>"_d
+:smap <C-c> <C-g>y
+:smap <C-x> <C-g>x
+:imap <C-v> <Esc>pi
+:smap <C-v> <C-g>p
+:smap <Tab> <C-g>1> 
+:smap <S-Tab> <C-g>1<
+" ============================== 
+" Functions
+"==============================
+" Insert a tab or complete the current word
+ function! CleverTab(direction)
+  if getline('.')[col('.')-2] =~ '\s\|^$'
+     return "\<tab>"
+  elseif a:direction
+        return "\<C-p>"
+  else
+    return "\<C-n>"
+  endif
+ endfunction
+" Reformat the whole file
+ function! ReformatFile()
+  exe "normal msHmtgg"
+  exe "normal gg=G"
+  exe "normal 'tzt`s"
+  endfunction
+" Remove trailing spaces
+ function! RemoveTrailingSpaces()
+  exe "normal msHmtgg"
+  %s/\s\+$//e
+  endfunction
+" Remove trailing line feed characters
+ function! Dos2Unix()
+  exe "normal msHmtgg"
+  %s/\r/\r/g
+  exe "normal 'tzt`s"
+  endfunction

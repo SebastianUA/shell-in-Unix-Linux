@@ -1,5 +1,12 @@
 # shell-in-Unix-Linux
 
 
-<img src="http://www.tr0n.net/wp-content/uploads/2013/03/Terminal.jpg" alt="Shell" />
-  
+<img src="https://cdn.allthings.how/wp-content/uploads/2020/09/allthings.how-how-to-check-linux-versions-linux-computer-759x427.png?width=800" alt="Shell" />
+
+
+## How to use
+
+``` Run:
+$ bash install_shell.sh
+
+```
