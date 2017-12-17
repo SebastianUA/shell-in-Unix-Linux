@@ -14,6 +14,23 @@ alias grep='egrep --color'
 #My VPS
 #alias linux-notes="ssh USER@IP" 
 #alias linux-notes-backup="scp -r USER@IP:/home/captain/backups/backup-* ~/My\ works/My_sites/backUPs/"
+# GIT
+alias gst='git status'
+alias gl='git pull'
+alias gp='git push'
+alias gd='git diff | mate'
+alias ga='git add '
+alias gau='git add --update'
+alias gc='git commit -v'
+alias gca='git commit -v -a'
+alias gb='git branch'
+alias gba='git branch -a'
+alias gco='git checkout'
+alias gcob='git checkout -b'
+alias gcot='git checkout -t'
+alias gcotb='git checkout --track -b'
+alias glog='git log'
+alias glogp='git log --pretty=format:"%h %s" --graph'
 #==============================Set colors==============================#
 export CLICOLOR=1  
 export LSCOLORS=Gxfxcxdxbxegedabagacad
@@ -45,54 +62,56 @@ if [ -f /usr/local/bin/grc ]; then
 fi
 #==============================History Tweaks==============================#
 export HISTIGNORE=pwgen*
-export HISTCONTROL=ignoredups:ignorespace
-export HISTSIZE=1000
-export HISTFILESIZE=2000
+export HISTCONTROL=ignoredups:ignorespace # no duplicate entries
+export HISTSIZE=1000 # custom history size
+export HISTFILESIZE=2000 # custom history file size
+shopt -s histappend  # append to history, don't overwrite it
+PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"  # Save and reload the history after each command finishes           
+#==============================FUNCTIONS==============================#
 #==============================FUNCTIONS==============================#
 # extract archives
-extract () {
-  if [ -f $1 ] ; then
-      # display usage if no parameters given
-      # echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
-      case $1 in
-          *.tar.bz2)   tar xvjf "$1"    ;;
-          *.tar.gz)    tar xvzf "$1"    ;;
-          *.tar.xz)    tar xvJf "$1"    ;;
-          *.lzma)      unlzma "$1"      ;;
-          *.bz2)       bunzip2 "$1"     ;;
-          *.rar)       rar x "$1"       ;;
-          *.gz)        gunzip "$1"      ;;
-          *.tar)       tar xvf "$1"     ;;
-          *.tbz2)      tar xvjf "$1"    ;;
-          *.tgz)       tar xvzf "$1"    ;;
-          *.zip)       unzip "$1"       ;;
-          *.xz)        unxz "$1"        ;;
-          *.Z)         uncompress "$1"  ;;
-          *.7z)        7z x "$1"        ;;
-          *)           echo "don't know how to extract '$1'..." ;;
-      esac
-  else
-      echo "'$1' is not a valid file!"
-  fi
+ extract () {
+           if [ -f $1 ] ; then
+                   # display usage if no parameters given
+                   echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+                   case $1 in
+                           *.tar.bz2)   tar xvjf "$1"    ;;
+                           *.tar.gz)    tar xvzf "$1"    ;;
+                           *.tar.xz)    tar xvJf "$1"    ;;
+                           *.lzma)      unlzma "$1"      ;;
+                           *.bz2)       bunzip2 "$1"     ;;
+                           *.rar)       rar x "$1"       ;;
+                           *.gz)        gunzip "$1"      ;;
+                           *.tar)       tar xvf "$1"     ;;
+                           *.tbz2)      tar xvjf "$1"    ;;
+                           *.tgz)       tar xvzf "$1"    ;;
+                           *.zip)       unzip "$1"       ;;
+                           *.xz)        unxz "$1"        ;;
+                           *.Z)         uncompress "$1"  ;;
+                           *.7z)        7z x "$1"        ;;
+                           *)           echo "don't know how to extract '$1'..." ;;
+                   esac
+           else
+                   echo "'$1' is not a valid file!"
+           fi
 }
 # pack directories
-function pack() {
-    target=${2%/}
-    case $1 in
-    gz)
-        tar czvf ${target}.tar.gz $target ;;
-    bz)
-        tar cjvf ${target}.tar.bz2 $target ;;
-    xz)
-        tar cJvf ${target}.tar.xz $target ;;
-    7z)
-        7zr a ${target}.7z $target ;;
-    rar)
-        rar a ${target}.rar $target ;;
-    zip)
-        zip -r ${target}.zip $target ;;
-    *)
-        echo "Usage: pack [gzip|bzip2|xz|7z|rar|zip] [target]" ;;
-    esac
+   function pack() {
+       target=${2%/}
+           case $1 in
+                       	gz)
+                               tar czvf ${target}.tar.gz $target ;;
+                       	bz)
+			                         tar cjvf ${target}.tar.bz2 $target ;;
+			                  xz)
+				                        tar cJvf ${target}.tar.xz $target ;;
+			                  7z)
+				                        7zr a ${target}.7z $target ;;
+			                  rar)
+				                        rar a ${target}.rar $target ;;
+			                  zip)
+				                        zip -r ${target}.zip $target ;;
+			                  *)
+				                        echo "Usage: pack [gzip|bzip2|xz|7z|rar|zip] [target]" ;;
+	esac
 }
-
