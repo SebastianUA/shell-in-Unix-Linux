@@ -4,13 +4,13 @@
 
 $ brew leaves | xargs -n1 brew desc
 
-$ brew list > brew_list_pkgs.txt
-$ brew list --cask > brew_list_cask_pkgs.txt
+$ brew list > ./brew/brew_list_pkgs.txt
+$ brew list --cask > ./brew/brew_list_cask_pkgs.txt
 $ brew deps --tree --installed
 
 
-$ xargs brew install < brew_list_pkgs.txt
-$ xargs brew install < brew_list_cask_pkgs.txt
+$ xargs brew install < ./brew/brew_list_pkgs.txt
+$ xargs brew install < ./brew/brew_list_cask_pkgs.txt
 
 
 Creates Brewfile in the current directory from currently-installed packages
