@@ -1,7 +1,7 @@
 #!/usr/bin/env bash -x
 
 # CREATED by Vitaliy Natarov [vitaliy.natarov@yahoo.com]
-# Unix/Linux blog: http://linux-notes.org
+# Unix/Linux blog: https://linux-notes.org
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Global vars
@@ -12,7 +12,7 @@ SETCOLOR_FAILURE="echo -en \\033[1;31m"			# Red
 SETCOLOR_NORMAL="echo -en \\033[0;39m"			# White
 
 SETCOLOR_TITLE="echo -en \\033[1;36m" 			# Fuscia
-SETCOLOR_TITLE_GREEN="echo -en \\033[0;32m" 	# Green
+SETCOLOR_TITLE_GREEN="echo -en \\033[0;32m"		# Green
 SETCOLOR_NUMBERS="echo -en \\033[0;34m" 		# BLUE
 
 PROJECT_DIR="."
@@ -31,7 +31,9 @@ else
 	touch $LOG_FILE	
 fi
 
-echo "$LOG_FILE file has been created in the current folder.";
+${SETCOLOR_TITLE}
+echo "$LOG_FILE file has been created in the '${PROJECT_DIR}' folder."
+${SETCOLOR_NORMAL}
 
 exec > >(tee -a ${LOG_FILE} )
 exec 2> >(tee -a ${LOG_FILE} >&2)
@@ -53,69 +55,31 @@ function operation_status {
 	fi
 }
 
-function install_pkgs () {
-	if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ] ; then
-    	Redhat_lsb_core="rpm -qa | grep redhat-lsb-core"
-		if [ ! -n "`$Redhat_lsb_core`" ]; then 
-			yum install redhat-lsb-core -y 
-		fi
-    
-		OS=$(lsb_release -ds | cut -d '"' -f2 | awk '{print $1}')
-		OS_MAJOR_VERSION=`sed -rn 's/.*([0-9])\.[0-9].*/\1/p' /etc/redhat-release`
-		OS_MINOR_VERSION=`sed -rn 's/.*[0-9].([0-9]).*/\1/p' /etc/redhat-release`
-		Bit_OS=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
-		
-		$SETCOLOR_GREEN
-		echo "RedHat's OS with $OS-$OS_MAJOR_VERSION.$OS_MINOR_VERSION and $Bit_OS bit arch"
-		$SETCOLOR_NORMAL
 
-		# Update OS
-		yum update -y && yum upgrade -y
+function install_pkgs_redhats () {
+	# Update OS
+	yum update -y && yum upgrade -y
 	
-		# Install some utilites
-		if ! type -path "wget" > /dev/null 2>&1; then sudo yum install wget -y; fi
-		if ! type -path "git" > /dev/null 2>&1; then sudo yum install git -y; fi
-		if ! type -path "pv" > /dev/null 2>&1; then sudo yum install pv -y; fi
-	elif [ -f /etc/fedora_version ]; then
-		OS=$(lsb_release -ds | cut -d '"' -f2 | awk '{print $1}')
-		OS_MAJOR_VERSION=`sed -rn 's/.*([0-9])\.[0-9].*/\1/p' /etc/fedora_version`
-		OS_MINOR_VERSION=`sed -rn 's/.*[0-9].([0-9]).*/\1/p' /etc/fedora_version`
-		Bit_OS=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/') 
-		
-		$SETCOLOR_GREEN
-		echo "Fedora with $OS-$OS_MAJOR_VERSION.$OS_MINOR_VERSION($CODENAME) and $Bit_OS bit arch"
-		$SETCOLOR_NORMAL
-	elif [ -f /etc/debian_version ]; then
-		OS=$(lsb_release -ds | cut -d '"' -f2 | awk '{print $1}')
-		OS_MAJOR_VERSION=`sed -rn 's/.*([0-9])\.[0-9].*/\1/p' /etc/debian_version`
-		OS_MINOR_VERSION=`sed -rn 's/.*[0-9].([0-9]).*/\1/p' /etc/debian_version`
-		Bit_OS=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
-		
-		CODENAME=`cat /etc/*-release | grep "VERSION="`
-		CODENAME=${CODENAME##*\(}
-		CODENAME=${CODENAME%%\)*}
-		
-		$SETCOLOR_GREEN
-		echo "Debian's OS with $OS-$OS_MAJOR_VERSION.$OS_MINOR_VERSION($CODENAME) and $Bit_OS bit arch"
-		$SETCOLOR_NORMAL
-		
-		# Update OS
-		apt-get update -y && apt-get upgrade -y
-	
-		# Install some utilites
-		if ! type -path "wget" > /dev/null 2>&1; then sudo apt-get install wget -y; fi
-		if ! type -path "git" > /dev/null 2>&1; then sudo apt-get install git -y; fi
-		if ! type -path "pv" > /dev/null 2>&1; then sudo apt-get install pv -y; fi
-	elif [ -f /usr/sbin/system_profiler ]; then
-		OS=$(uname)
-		Mac_Ver=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
-		Bit_OS=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
-		
-		${SETCOLOR_TITLE}
-		echo "MacOS with $OS-$Mac_Ver and $Bit_OS bit arch"
-		${SETCOLOR_NORMAL}
-		
-		which -s brew
+	# Install some utilites
+	if ! type -path "wget" > /dev/null 2>&1; then sudo yum install wget -y; fi
+	if ! type -path "git" > /dev/null 2>&1; then sudo yum install git -y; fi
+	if ! type -path "pv" > /dev/null 2>&1; then sudo yum install pv -y; fi
+}
+
+
+function install_pkgs_debs () {
+	# Update OS
+	apt-get update -y && apt-get upgrade -y
+
+	# Install some utilites
+	if ! type -path "wget" > /dev/null 2>&1; then sudo apt-get install wget -y; fi
+	if ! type -path "git" > /dev/null 2>&1; then sudo apt-get install git -y; fi
+	if ! type -path "pv" > /dev/null 2>&1; then sudo apt-get install pv -y; fi
+}
+
+
+function install_pkgs_macos () {
+	which -s brew
 		if [[ $? != 0 ]] ; then
 			# Install Homebrew
 			/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -138,6 +102,62 @@ function install_pkgs () {
 			# xargs brew install < ${PROJECT_DIR}/brew/brew_list_cask_pkgs.txt
 			brew install $(cat ${PROJECT_DIR}/brew/brew_list_cask_pkgs.txt | xargs -I{} -n1 echo {})
 		fi
+}
+
+
+function os_check () {
+	if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ] ; then
+    	Redhat_lsb_core="rpm -qa | grep redhat-lsb-core"
+		if [ ! -n "`$Redhat_lsb_core`" ]; then 
+			yum install redhat-lsb-core -y 
+		fi
+    
+		OS=$(lsb_release -ds | cut -d '"' -f2 | awk '{print $1}')
+		OS_MAJOR_VERSION=`sed -rn 's/.*([0-9])\.[0-9].*/\1/p' /etc/redhat-release`
+		OS_MINOR_VERSION=`sed -rn 's/.*[0-9].([0-9]).*/\1/p' /etc/redhat-release`
+		Bit_OS=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
+		
+		$SETCOLOR_GREEN
+		echo "RedHat's OS with $OS-$OS_MAJOR_VERSION.$OS_MINOR_VERSION and $Bit_OS bit arch"
+		$SETCOLOR_NORMAL
+
+		install_pkgs_redhats		
+	elif [ -f /etc/fedora_version ]; then
+		OS=$(lsb_release -ds | cut -d '"' -f2 | awk '{print $1}')
+		OS_MAJOR_VERSION=`sed -rn 's/.*([0-9])\.[0-9].*/\1/p' /etc/fedora_version`
+		OS_MINOR_VERSION=`sed -rn 's/.*[0-9].([0-9]).*/\1/p' /etc/fedora_version`
+		Bit_OS=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/') 
+		
+		$SETCOLOR_GREEN
+		echo "Fedora with $OS-$OS_MAJOR_VERSION.$OS_MINOR_VERSION($CODENAME) and $Bit_OS bit arch"
+		$SETCOLOR_NORMAL
+
+		install_pkgs_redhats
+	elif [ -f /etc/debian_version ]; then
+		OS=$(lsb_release -ds | cut -d '"' -f2 | awk '{print $1}')
+		OS_MAJOR_VERSION=`sed -rn 's/.*([0-9])\.[0-9].*/\1/p' /etc/debian_version`
+		OS_MINOR_VERSION=`sed -rn 's/.*[0-9].([0-9]).*/\1/p' /etc/debian_version`
+		Bit_OS=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
+		
+		CODENAME=`cat /etc/*-release | grep "VERSION="`
+		CODENAME=${CODENAME##*\(}
+		CODENAME=${CODENAME%%\)*}
+		
+		$SETCOLOR_GREEN
+		echo "Debian's OS with $OS-$OS_MAJOR_VERSION.$OS_MINOR_VERSION($CODENAME) and $Bit_OS bit arch"
+		$SETCOLOR_NORMAL
+		
+		install_pkgs_debs
+	elif [ -f /usr/sbin/system_profiler ]; then
+		OS=$(uname)
+		Mac_Ver=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
+		Bit_OS=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
+		
+		${SETCOLOR_TITLE}
+		echo "MacOS with $OS-$Mac_Ver and $Bit_OS bit arch"
+		${SETCOLOR_NORMAL}
+		
+		install_pkgs_macos
 	else
 		OS=$(uname -s)
 		VER=$(uname -r)
@@ -199,12 +219,12 @@ function configure_vim () {
 	source ~/.vimrc
 }
 
-install_pkgs
-configure_shell
-configure_vim
+os_check
+configure_shell; operation_status
+configure_vim; operation_status
 
 $SETCOLOR_TITLE_GREEN
-echo "========================================================================================================";
-echo "================================================FINISHED================================================";
-echo "========================================================================================================";
+echo "==============================================================================================";
+echo "===========================================FINISHED===========================================";
+echo "==============================================================================================";
 $SETCOLOR_NORMAL
