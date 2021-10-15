@@ -19,3 +19,5 @@ $ brew bundle dump
 Edit Brewfile & install everything from the Brewfile
 $ brew bundle
  
+Get tap formulas:
+$ brew tap > ./brew/brew_taps.txt

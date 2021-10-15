@@ -6,6 +6,12 @@
 
 ## How to use
 
+First of all, install oh-my-sh to start using ZSH features:
+```bash
+$ sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+```
+
 Run the next command to install everything for your workspace:
 ```
 $ bash install.sh

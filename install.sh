@@ -12,7 +12,7 @@ SETCOLOR_FAILURE="echo -en \\033[1;31m"			# Red
 SETCOLOR_NORMAL="echo -en \\033[0;39m"			# White
 
 SETCOLOR_TITLE="echo -en \\033[1;36m" 			# Fuscia
-SETCOLOR_TITLE_GREEN="echo -en \\033[0;32m"	# Green
+SETCOLOR_TITLE_GREEN="echo -en \\033[0;32m"	    # Green
 SETCOLOR_NUMBERS="echo -en \\033[0;34m" 		# BLUE
 
 PROJECT_DIR="."
@@ -20,6 +20,10 @@ CP_DIR=$(which cp)
 MV_DIR=$(which mv)
 RM_DIR=$(which rm)
 GIT_DIR=$(which git)
+WGET_DIR=$(which wget)
+WHOAMI=$(whoami)
+OHMYZSH_CUSTOM="/Users/${WHOAMI}/.oh-my-zsh/custom"
+CURRENT_DATE=$(date +%m-%d-%Y-%H-%M-%S)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # For logs
@@ -80,6 +84,21 @@ function install_pkgs_debs () {
 
 
 function install_pkgs_macos () {
+	# Requires root
+	os=$(sw_vers -productVersion | awk -F. '{print $1 "." $2}')
+	if softwareupdate --history | grep --silent "Command Line Tools.*${os}"; then
+		echo 'Command-line tools already installed.' 
+	else
+		softwareupdate -i -a
+		echo 'Installation succeeded.'
+	fi
+
+	# Install xCode by CLI
+	if [ ! -d /Library/Developer/CommandLineTools ]; then
+		echo 'Install xcode.'
+		sudo xcode-select --install
+	fi
+
 	which -s brew
 		if [[ $? != 0 ]] ; then
 			# Install Homebrew
@@ -99,8 +118,10 @@ function install_pkgs_macos () {
 		if [ -f ./brew/brew_list_pkgs.txt ]; then
 			brew install $(cat ${PROJECT_DIR}/brew/brew_list_pkgs.txt | xargs -I{} -n1 echo {})
 		fi
+		if [ -f ./brew/brew_taps.txt ]; then
+			cat ${PROJECT_DIR}/brew/brew_taps.txt | xargs -L 1 brew tap
+		fi
 		if [ -f ./brew/brew_list_cask_pkgs.txt ]; then
-			# xargs brew install < ${PROJECT_DIR}/brew/brew_list_cask_pkgs.txt
 			brew install $(cat ${PROJECT_DIR}/brew/brew_list_cask_pkgs.txt | xargs -I{} -n1 echo {})
 		fi
 }
@@ -174,22 +195,32 @@ function configure_shell () {
 	fi
 
 	$SETCOLOR_TITLE_GREEN
-	read -p 'Would you like to install shell (bash/zsh): ' SHELL
+	read -p 'Would you like to configure bash/zsh shell (q/e - exit): ' SHELL
 	$SETCOLOR_NORMAL
+
+	if [ ! -d "${PROJECT_DIR}/backups" ]; then
+		mkdir -p ${PROJECT_DIR}/backups/$CURRENT_DATE
+	else
+		${SETCOLOR_TITLE}
+		echo "You already have backup folder!"
+		${SETCOLOR_NORMAL}
+		# ${RM_DIR} -rf ${PROJECT_DIR}/backups
+		mkdir -p ${PROJECT_DIR}/backups/$CURRENT_DATE
+	fi
 
 	case ${SHELL} in
 		b|B|bash|BASH) {
 			# Backuping
-			if [ -f "~/.bash_profile" ]; then
-				sudo ${MV_DIR} ~/.bash_profile{,_BK}
+			if [ -f ~/.bash_profile ]; then
+				sudo ${MV_DIR} ~/.bash_profile ${PROJECT_DIR}/backups/$CURRENT_DATE/bash_profile_BK
 			fi
 
-			if [ -f "~/.bash_login" ]; then
-				sudo ${MV_DIR} ~/.bash_login{,_BK}
+			if [ -f ~/.bash_login ]; then
+				sudo ${MV_DIR} ~/.bash_login ${PROJECT_DIR}/backups/$CURRENT_DATE/bash_login_BK
 			fi
 
-			if [ -f "~/.bashrc" ]; then
-				sudo ${MV_DIR} ~/.bashrc{,_BK}
+			if [ -f ~/.bashrc ]; then
+				sudo ${MV_DIR} ~/.bashrc ${PROJECT_DIR}/backups/$CURRENT_DATE/bashrc_BK
 			fi
 
 			# Copying
@@ -204,42 +235,77 @@ function configure_shell () {
 			if [ -f "${PROJECT_DIR}/shells/bash/bashrc" ]; then
 				${CP_DIR} -rfn ${PROJECT_DIR}/shells/bash/bashrc ~/.bashrc
 			fi
+
 			source ~/.bashrc
 		};;
 		z|Z|zsh|ZSH|zSH) {
 			# Backuping
-			if [ -d "~/.oh-my-zsh" ]; then
-				sudo ${RM_DIR} -rf ~/.oh-my-zsh_BK*
-				sudo ${MV_DIR} ~/.oh-my-zsh{,_BK}
+			if [ -d ~/.oh-my-zsh ]; then
+				sudo ${CP_DIR} -rn ~/.oh-my-zsh ${PROJECT_DIR}/backups/$CURRENT_DATE/oh-my-zsh_BK
 			fi
 
-			if [ -f "~/.zsh_profile" ]; then
-				sudo ${MV_DIR} ~/.zsh_profile{,_BK}
+			if [ -f ~/.zsh_profile ]; then
+				sudo ${MV_DIR} ~/.zsh_profile ${PROJECT_DIR}/backups/$CURRENT_DATE/zsh_profile_BK
 			fi
 
-			if [ -f "~/.zshrc" ]; then
-				sudo ${MV_DIR} ~/.zshrc{,_BK}
+			if [ -f ~/.zshrc ]; then
+				sudo ${MV_DIR} ~/.zshrc ${PROJECT_DIR}/backups/$CURRENT_DATE/zshrc_BK
 			fi
 
 			# Copying
-			if [ -d "${PROJECT_DIR}/shells/zsh/oh-my-zsh" ]; then
-				${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/oh-my-zsh/custom/plugins/* $ZSH_CUSTOM/plugins/
-				${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/oh-my-zsh/custom/themes/* $ZSH_CUSTOM/themes/
-
-				${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/oh-my-zsh/plugins/* ~/.oh-my-zsh/plugins/
-				${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/oh-my-zsh/themes/* ~/.oh-my-zsh/themes/
-
-				${GIT_DIR} clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
-				${GIT_DIR} clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
+			if [ -d ${PROJECT_DIR}/shells/zsh/oh-my-zsh/custom/plugins ]; then
+				sudo ${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/oh-my-zsh/custom/plugins/* $OHMYZSH_CUSTOM/plugins/
 			fi
 
-			if [ -f "${PROJECT_DIR}/shells/zsh/zsh_profile" ]; then
+			if [ -d ${PROJECT_DIR}/shells/zsh/oh-my-zsh/custom/themes ]; then
+				sudo ${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/oh-my-zsh/custom/themes/* $OHMYZSH_CUSTOM/themes/
+			fi
+
+			
+			if [ -d ${PROJECT_DIR}/shells/zsh/oh-my-zsh/plugins ]; then
+				sudo ${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/oh-my-zsh/plugins/* ~/.oh-my-zsh/plugins
+			fi
+
+			if [ -d ${PROJECT_DIR}/shells/zsh/oh-my-zsh/themes ]; then
+				sudo ${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/oh-my-zsh/themes/* ~/.oh-my-zsh/themes
+			fi
+
+			# Install ZSH plugins
+			if [ ! -d $OHMYZSH_CUSTOM/plugins/zsh-autosuggestions ]; then
+				sudo ${GIT_DIR} clone https://github.com/zsh-users/zsh-autosuggestions.git $OHMYZSH_CUSTOM/plugins/zsh-autosuggestions
+			fi
+
+			if [ ! -d $OHMYZSH_CUSTOM/plugins/zsh-syntax-highlighting ]; then
+				sudo ${GIT_DIR} clone https://github.com/zsh-users/zsh-syntax-highlighting.git $OHMYZSH_CUSTOM/plugins/zsh-syntax-highlighting
+			fi
+
+			if [ ! -d $OHMYZSH_CUSTOM/plugins/zsh-docker ]; then
+				sudo ${GIT_DIR} clone https://github.com/zsh-users/zsh-docker.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-docker
+			fi
+
+
+			if [ -f ${PROJECT_DIR}/shells/zsh/zsh_profile ]; then
+				sudo ${RM_DIR} -f ~/.zsh_profile
 				${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/zsh_profile ~/.zsh_profile
 			fi
 
-			if [ -f "${PROJECT_DIR}/shells/zsh/zshrc" ]; then
+			if [ -f ${PROJECT_DIR}/shells/zsh/zsh_login ]; then
+				${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/zsh_login ~/.zsh_login
+			fi
+
+			if [ -f ${PROJECT_DIR}/shells/zsh/zshrc ]; then
+				sudo ${RM_DIR} -f ~/.zshrc
 				${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/zshrc ~/.zshrc
 			fi
+
+			sudo ${WGET_DIR} -O ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/agnoster.zsh-theme https://gist.githubusercontent.com/agnoster/3712874/raw/43cb371f361eecf62e9dac7afc73a1c16edf89c7/agnoster.zsh-theme
+
+			${GIT_DIR} clone git@github.com:powerline/fonts.git &&\
+			bash fonts/install.sh &&\
+			${RM_DIR} -rf fonts
+
+			zsh ~/.zshrc
+			
 		};;
 		e|E|exit) exit 1;;
 		q|Q|quit) exit 1;;
@@ -254,13 +320,12 @@ function configure_vim () {
 	$SETCOLOR_NORMAL
 	
 	# Backuping
-	if [ -d "~/.vim" ]; then
-		sudo ${RM_DIR} -rf ~/.vim_BK*
-		sudo ${MV_DIR} ~/.vim{,_BK}
+	if [ -d ~/.vim ]; then
+		sudo ${MV_DIR} ~/.vim ${PROJECT_DIR}/backups/$CURRENT_DATE/vim_BK
 	fi
 
-	if [ -f "~/.vimrc" ]; then
-		sudo ${MV_DIR} ~/.vimrc{,_BK}
+	if [ -f ~/.vimrc ]; then
+		sudo ${MV_DIR} ~/.vimrc ${PROJECT_DIR}/backups/$CURRENT_DATE/vimrc_BK
 	fi
 	
 	${CP_DIR} -rfn ${PROJECT_DIR}/vim/vim ~/.vim
@@ -270,9 +335,14 @@ function configure_vim () {
 	source ~/.vimrc
 }
 
+function configure_python_pip () {
+	# TBD
+}
+
 os_check
 configure_shell; operation_status
 configure_vim; operation_status
+
 
 $SETCOLOR_TITLE_GREEN
 echo "==============================================================================================";

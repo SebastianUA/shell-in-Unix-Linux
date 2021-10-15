@@ -1,3 +1,9 @@
+drawio
 jumpcut
 postman
 sourcetree
+visual-studio-code
+atom
+sublime-text
+webstorm
+sequel-ace

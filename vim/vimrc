@@ -29,6 +29,8 @@ call plug#end()
 " Show current line number 
  set number                     
  set numberwidth=5
+"delete"
+ set backspace=indent,eol,start
 "Display commands in the bottom right corner as they are typed
  set showcmd 
 " highlight current line 
