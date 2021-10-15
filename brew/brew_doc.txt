@@ -1,0 +1,21 @@
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Homebrew
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+$ brew leaves | xargs -n1 brew desc
+
+$ brew list | grep -Ev "$(brew list --cask)" > ./brew/brew_list_pkgs.txt
+$ brew list --cask > ./brew/brew_list_cask_pkgs.txt
+$ brew deps --tree --installed
+
+
+$ xargs brew install < ./brew/brew_list_pkgs.txt
+$ xargs brew install < ./brew/brew_list_cask_pkgs.txt
+
+
+Creates Brewfile in the current directory from currently-installed packages
+$ brew bundle dump
+
+Edit Brewfile & install everything from the Brewfile
+$ brew bundle
+ 

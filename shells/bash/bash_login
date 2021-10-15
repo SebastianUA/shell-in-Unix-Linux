@@ -1,0 +1,13 @@
+#######################################################################
+#                                                                     #
+#   Bash_login file                                                   #
+#                                                                     #
+#   commands to perform from the bash shell at login time             #
+#   (sourced from .bash_profile)                                      #
+#                                                                     #
+#######################################################################
+#   file protection
+umask 002       # all to me, read to group and others
+#   miscellaneous
+w
+#cal `date +"%m"` `date +"%Y"`
