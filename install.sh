@@ -341,12 +341,13 @@ function configure_vim () {
 }
 
 function configure_python_pip () {
-	# TBD
+	curl https://bootstrap.pypa.io/get-pip.py | python3
 }
 
 os_check
 configure_shell; operation_status
 configure_vim; operation_status
+configure_python_pip; operation_status
 
 
 $SETCOLOR_TITLE_GREEN
