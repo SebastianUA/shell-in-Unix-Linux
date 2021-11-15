@@ -9,8 +9,6 @@ autoload -Uz compinit && compinit
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
 ZSH_THEME="agnoster"
-#ZSH_THEME="cobalt2"
-#ZSH_THEME="random"
 
 # Uncomment the following line to use case-sensitive completion.
 CASE_SENSITIVE="false"
@@ -59,7 +57,6 @@ HIST_STAMPS="mm/dd/yyyy"
 plugins=(git brew python perl nmap mosh man docker cp zsh-autosuggestions autojump)
 
 # User configuration
-
 export PATH="/bin:/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/opt/X11/bin:/usr/local/opt/coreutils/libexec/gnubin:${PATH}"
 export MANPATH="/usr/local/man:/usr/share/man:$MANPATH"
  
@@ -71,11 +68,16 @@ source $ZSH/oh-my-zsh.sh
 export LANG=en_US.utf-8
 export LC_ALL=en_US.utf-8
  
+
+if [ -f ~/.zsh_aliases ]; then
+    source ~/.zsh_aliases
+fi
+
 #Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
     export EDITOR='vim'
 else
-	export EDITOR='vim'
+    export EDITOR='vim'
 fi
 
 # Compilation flags
@@ -88,77 +90,107 @@ export SSH_KEY_PATH="~/.ssh/rsa_id"
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
 
-#==============================ALIASES==============================#
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-alias ls="ls -G"
-alias ll="ls -alh"
-alias la="ls -la"
-alias lk='ls -lSr'
-alias дд='ll'
-alias мшь='vim'
 
-alias ..="cd ../"
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
-alias ......="cd ../../../../.."
+#==============================HISTORY==============================#
 
-alias tojson="python -m json.tool"
-alias please='sudo $(fc -ln -1)'
-
-# git
-alias git_commit_reset="git reset --hard"
-# Terraform
-alias tf_update="bash /Users/${DEFAULT_USER}/Projects/Bash/terraform/install_terraform.sh"
-alias tf_gen_doc='_tfgendoc(){ python3 /Users/${DEFAULT_USER}/Projects/Python/Terraform/generate_docs_pyhcl.py --hcl-version=2 -m="/Users/${DEFAULT_USER}/Projects/Terraform/aws/modules/$1" -e="/Users/${DEFAULT_USER}/Projects/Terraform/aws/examples/$1" ;}; _tfgendoc'
-alias tf_rm_folders='_tfrmfolders() { find /Users/${DEFAULT_USER}/Projects/Terraform -type d -name ".terraform" -exec rm -rf "{}" \; ;}; _tfrmfolders'
-alias tf_rm_tfrmfiles='_tfrmfiles() { find /Users/${DEFAULT_USER}/Projects/Terraform -type f -name "terraform.tfstate*" -exec rm -rf "{}" \; ;}; _tfrmfiles'
-
-# global protect (start/stop)
-alias global_protect_fuck="launchctl unload /Library/LaunchAgents/com.paloaltonetworks.gp.pangp*"
-alias global_protect_up="launchctl load /Library/LaunchAgents/com.paloaltonetworks.gp.pangp*"
-
-alias generate_publickey_from_private='_genpubkey(){ ssh-keygen -y -f "$1" > "$2" ;}; _genpubkey'
-alias mkcd='_mkcd(){ mkdir "$1"; cd "$1";}; _mkcd'
-alias docker_rm_all_none_images='docker rmi -f $(docker images -f "dangling=true" -q)'
+#      
+#if [ -z "$*" ]; then history 1; else history 1 | egrep "$@"; fi;
 #
-# alias history_stats='''history | awk '{CMD[$5]++;count++;}END { for (a in CMD)print CMD[a] " " CMD[a]/count*100 "% " a;}' | grep -v "./" | column -c3 -s " " -t | sort -nr | nl |  head -n5'''
+
+## Command history configuration
+if [ -z "$HISTFILE" ]; then
+    HISTFILE=$HOME/.zsh_history
+fi
+
+HISTSIZE=10000
+SAVEHIST=$HISTSIZE
 #
-alias set_zsh="chsh -s /bin/zsh"
-alias set_bash="chsh -s /bin/bash"
-#
-alias kill_finder="sudo killall Finder"
-#
-alias mtr="/usr/local/sbin/mtr"
-#alias locate='if [ $((`date +%s`-`eval $(stat -s /var/db/locate.database); echo $st_mtime`)) -gt 3600 ]; then echo "locate: db is too old!">/dev/stderr; sudo /usr/libexec/locate.updatedb; fi; locate -i'
-alias PyENV='eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"'
-alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
-alias brew_up="brew update && brew upgrade"
+export HISTIGNORE=pwgen*
+export HISTCONTROL=ignoredups:ignorespace # no duplicate entries
+export HISTTIMEFORMAT="%h %d %H:%M:%S "
+# Show history
+case $HIST_STAMPS in
+    "mm/dd/yyyy") alias history='fc -fl 1' ;;
+    "dd.mm.yyyy") alias history='fc -El 1' ;;
+    "yyyy-mm-dd") alias history='fc -il 1' ;;
+    *) alias history='fc -l 1' ;;
+esac
 
-# Docker/K8S
-alias kubectl_delete_all="kubectl delete daemonsets,replicasets,services,deployments,pods,rc --all"
-alias delete_docker_folder=":> /Users/${DEFAULT_USER}/Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw"
-alias kk="kubectl"
+setopt append_history
+setopt extended_history
+setopt hist_expire_dups_first
+setopt hist_ignore_dups # ignore duplication command history list
+setopt hist_ignore_space
+setopt hist_verify
+setopt inc_append_history #Appends every command to the history file once it is executed
+setopt share_history # share command history data                                       
 
-alias awsL="aws s3api list-buckets --query 'Buckets[].Name'"
-alias get_OTP="python3 /Users/${DEFAULT_USER}/Projects/python/pyotp/get_OTP.py"
+#==============================FUNCTIONS==============================#
+# extract archives
+function extract () {
+    if [ -f $1 ]; then
+      # display usage if no parameters given
+      # echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+      case $1 in
+          *.tar.bz2)   tar xvjf "$1"    ;;
+          *.tar.gz)    tar xvzf "$1"    ;;
+          *.tar.xz)    tar xvJf "$1"    ;;
+          *.lzma)      unlzma "$1"      ;;
+          *.bz2)       bunzip2 "$1"     ;;
+          *.rar)       rar x "$1"       ;;
+          *.gz)        gunzip "$1"      ;;
+          *.tar)       tar xvf "$1"     ;;
+          *.tbz2)      tar xvjf "$1"    ;;
+          *.tgz)       tar xvzf "$1"    ;;
+          *.zip)       unzip "$1"       ;;
+          *.xz)        unxz "$1"        ;;
+          *.Z)         uncompress "$1"  ;;
+          *.7z)        7z x "$1"        ;;
+          *)           echo "Don't know how to extract '$1'..." ;;
+      esac
+    else
+        echo "'$1' is not a valid file!"
+    fi
+  }
+  # pack directories
+function pack() {
+    target=${2%/}
+    case $1 in
+        gz)     tar czvf ${target}.tar.gz $target ;;
+        bz)     tar cjvf ${target}.tar.bz2 $target ;;
+        xz)     tar cJvf ${target}.tar.xz $target ;;
+        7z)     7zr a ${target}.7z $target ;;
+        rar)    rar a ${target}.rar $target ;;
+        zip)    zip -r ${target}.zip $target ;;
+        *)      echo "Usage: pack [gz|bz|xz|7z|rar|zip] [target_path]" ;;
+    esac
+}
 
-alias realIP="curl -L https://ifconfig.co || curl -L http://ifconfig.co"
-alias virtualBox_restart="sudo /Library/Application\ Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh restart"
-alias audio_restart="sudo killall coreaudiod || sudo kill $(ps -ax| grep -E 'coreaudiod'| grep -Ev grep | awk '{print $1}')"
-alias bluetooth_restart="sudo kextunload -b com.apple.iokit.BroadcomBluetoothHostControllerUSBTransport && sudo kextload -b com.apple.iokit.BroadcomBluetoothHostControllerUSBTransport"
+# Disable globbing on the remote path.
+alias scp='noglob scp_wrap'
+function scp_wrap {
+    local -a args
+    local i
+    for i in "$@"; do case $i in
+        (*:*) args+=($i) ;;
+            (*) args+=(${~i}) ;;
+            esac; done
+            command scp "${(@)args}"
+}
+
+load-tfswitch() {
+  local tfswitchrc_path=".tfswitchrc"
+
+  if [ -f "$tfswitchrc_path" ]; then
+    tfswitch
+  fi
+}
+add-zsh-hook chpwd load-tfswitch
+load-tfswitch
 
 
-alias geoIP="curl ipinfo.io 2>1 | grep -E 'ip'"
 
-alias ohmyzsh_upgrade_force="cd $ZSH/ && git reset --hard HEAD~1 && git pull"
-
-# AWS
-#complete -C aws_completer aws
-
+# grc
 if [ -f /usr/local/bin/grc ]; then
     alias cvs="grc --colour=auto cvs"
     alias diff="grc --colour=auto diff"
@@ -189,104 +221,10 @@ if [ -f /usr/local/bin/grc ]; then
     alias tcpdump="grc --colour=auto tcpdump"
 fi
 
-#==============================HISTORY==============================#
-
-#      
-#if [ -z "$*" ]; then history 1; else history 1 | egrep "$@"; fi;
-#
-
-## Command history configuration
-if [ -z "$HISTFILE" ]; then
-    HISTFILE=$HOME/.zsh_history
-fi
-
-HISTSIZE=10000
-SAVEHIST=10000
-#
-export HISTIGNORE=pwgen*
-export HISTCONTROL=ignoredups:ignorespace # no duplicate entries
-export HISTTIMEFORMAT="%h %d %H:%M:%S "
-# Show history
-case $HIST_STAMPS in
-	"mm/dd/yyyy") alias history='fc -fl 1' ;;
-    "dd.mm.yyyy") alias history='fc -El 1' ;;
-    "yyyy-mm-dd") alias history='fc -il 1' ;;
-    *) alias history='fc -l 1' ;;
-esac
-
-setopt append_history
-setopt extended_history
-setopt hist_expire_dups_first
-setopt hist_ignore_dups # ignore duplication command history list
-setopt hist_ignore_space
-setopt hist_verify
-setopt inc_append_history #Appends every command to the history file once it is executed
-setopt share_history # share command history data								        
-
-#==============================FUNCTIONS==============================#
-# extract archives
-function extract () {
-	if [ -f $1 ]; then
-	  # display usage if no parameters given
-	  # echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
-	  case $1 in
-		  *.tar.bz2)   tar xvjf "$1"    ;;
-	  	  *.tar.gz)    tar xvzf "$1"    ;;
-  		  *.tar.xz)    tar xvJf "$1"    ;;
-		  *.lzma)      unlzma "$1"      ;;
-		  *.bz2)       bunzip2 "$1"     ;;
-  		  *.rar)       rar x "$1"       ;;
-		  *.gz)        gunzip "$1"      ;;
-	  	  *.tar)       tar xvf "$1"     ;;
-	  	  *.tbz2)      tar xvjf "$1"    ;;
-  		  *.tgz)       tar xvzf "$1"    ;;
-		  *.zip)       unzip "$1"       ;;
-	  	  *.xz)        unxz "$1"        ;;
-  		  *.Z)         uncompress "$1"  ;;
-		  *.7z)        7z x "$1"        ;;
-		  *)           echo "Don't know how to extract '$1'..." ;;
-	  esac
-	else
-		echo "'$1' is not a valid file!"
-	fi
-  }
-  # pack directories
-function pack() {
-	target=${2%/}
-	case $1 in
-		gz)     tar czvf ${target}.tar.gz $target ;;
- 	    bz)     tar cjvf ${target}.tar.bz2 $target ;;
-      	xz)     tar cJvf ${target}.tar.xz $target ;;
-      	7z)     7zr a ${target}.7z $target ;;
-      	rar)    rar a ${target}.rar $target ;;
-      	zip)    zip -r ${target}.zip $target ;;
-      	*)      echo "Usage: pack [gz|bz|xz|7z|rar|zip] [target_path]" ;;
-  	esac
-}
-
-# Disable globbing on the remote path.
-alias scp='noglob scp_wrap'
-function scp_wrap {
-  	local -a args
-	local i
-	for i in "$@"; do case $i in
-		(*:*) args+=($i) ;;
-       		(*) args+=(${~i}) ;;
-        	esac; done
-        	command scp "${(@)args}"
-}
-
-load-tfswitch() {
-  local tfswitchrc_path=".tfswitchrc"
-
-  if [ -f "$tfswitchrc_path" ]; then
-    tfswitch
-  fi
-}
-add-zsh-hook chpwd load-tfswitch
-load-tfswitch
-
 #==============================AUTOCOMPLITE==============================#
+# AWS
+#complete -C aws_completer aws
+
 source /usr/local/share/zsh/site-functions/_aws
 autoload -U +X bashcompinit && bashcompinit
 complete -C /usr/local/bin/terraform terraform
@@ -310,5 +248,3 @@ eval "$(pyenv virtualenv-init -)"
 
 # Make zsh know about hosts already accessed by SSH
 zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
-
-

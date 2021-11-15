@@ -289,6 +289,11 @@ function configure_shell () {
 				${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/zsh_profile ~/.zsh_profile
 			fi
 
+			if [ -f ${PROJECT_DIR}/shells/zsh/zsh_aliases ]; then
+				sudo ${RM_DIR} -f ~/.zsh_aliases
+				${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/zsh_aliases ~/.zsh_aliases
+			fi
+
 			if [ -f ${PROJECT_DIR}/shells/zsh/zsh_login ]; then
 				${CP_DIR} -rfn ${PROJECT_DIR}/shells/zsh/zsh_login ~/.zsh_login
 			fi

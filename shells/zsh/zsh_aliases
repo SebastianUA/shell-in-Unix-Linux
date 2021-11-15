@@ -1,0 +1,67 @@
+#==============================ALIASES==============================#
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+alias ls="ls -G"
+alias ll="ls -alh"
+alias la="ls -la"
+alias lk='ls -lSr'
+alias дд='ll'
+alias мшь='vim'
+
+alias ..="cd ../"
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
+
+alias tojson="python -m json.tool"
+alias please='sudo $(fc -ln -1)'
+
+# git
+alias git_commit_reset="git reset --hard"
+# Terraform
+alias tf_update="bash /Users/${DEFAULT_USER}/Projects/Bash/terraform/install_terraform.sh"
+alias tf_gen_doc='_tfgendoc(){ python3 /Users/${DEFAULT_USER}/Projects/Python/Terraform/generate_docs_pyhcl.py --hcl-version=2 -m="/Users/${DEFAULT_USER}/Projects/Terraform/aws/modules/$1" -e="/Users/${DEFAULT_USER}/Projects/Terraform/aws/examples/$1" ;}; _tfgendoc'
+alias tf_rm_folders='_tfrmfolders() { find /Users/${DEFAULT_USER}/Projects/Terraform -type d -name ".terraform" -exec rm -rf "{}" \; ;}; _tfrmfolders'
+alias tf_rm_tfrmfiles='_tfrmfiles() { find /Users/${DEFAULT_USER}/Projects/Terraform -type f -name "terraform.tfstate*" -exec rm -rf "{}" \; ;}; _tfrmfiles'
+
+# global protect (start/stop)
+alias global_protect_fuck="launchctl unload /Library/LaunchAgents/com.paloaltonetworks.gp.pangp*"
+alias global_protect_up="launchctl load /Library/LaunchAgents/com.paloaltonetworks.gp.pangp*"
+
+alias generate_publickey_from_private='_genpubkey(){ ssh-keygen -y -f "$1" > "$2" ;}; _genpubkey'
+alias mkcd='_mkcd(){ mkdir "$1"; cd "$1";}; _mkcd'
+alias docker_rm_all_none_images='docker rmi -f $(docker images -f "dangling=true" -q)'
+#
+# alias history_stats='''history | awk '{CMD[$5]++;count++;}END { for (a in CMD)print CMD[a] " " CMD[a]/count*100 "% " a;}' | grep -v "./" | column -c3 -s " " -t | sort -nr | nl |  head -n5'''
+#
+alias set_zsh="chsh -s /bin/zsh"
+alias set_bash="chsh -s /bin/bash"
+#
+alias kill_finder="sudo killall Finder"
+#
+alias mtr="/usr/local/sbin/mtr"
+#alias locate='if [ $((`date +%s`-`eval $(stat -s /var/db/locate.database); echo $st_mtime`)) -gt 3600 ]; then echo "locate: db is too old!">/dev/stderr; sudo /usr/libexec/locate.updatedb; fi; locate -i'
+alias PyENV='eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"'
+alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
+alias brew_up="brew update && brew upgrade"
+
+# Docker/K8S
+alias kubectl_delete_all="kubectl delete daemonsets,replicasets,services,deployments,pods,rc --all"
+alias delete_docker_folder=":> /Users/${DEFAULT_USER}/Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw"
+alias kk="kubectl"
+
+alias awsL="aws s3api list-buckets --query 'Buckets[].Name'"
+alias get_OTP="python3 /Users/${DEFAULT_USER}/Projects/python/pyotp/get_OTP.py"
+
+alias realIP="curl -L https://ifconfig.co || curl -L http://ifconfig.co"
+alias virtualBox_restart="sudo /Library/Application\ Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh restart"
+alias audio_restart="sudo killall coreaudiod || sudo kill $(ps -ax| grep -E 'coreaudiod'| grep -Ev grep | awk '{print $1}')"
+alias bluetooth_restart="sudo kextunload -b com.apple.iokit.BroadcomBluetoothHostControllerUSBTransport && sudo kextload -b com.apple.iokit.BroadcomBluetoothHostControllerUSBTransport"
+
+
+alias geoIP="curl ipinfo.io 2>1 | grep -E 'ip'"
+
+alias ohmyzsh_upgrade_force="cd $ZSH/ && git reset --hard HEAD~1 && git pull"
